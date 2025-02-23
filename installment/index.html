@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Present Value Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="config.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Present Value Calculator</h1>
+    <form id="calcForm">
+      <div class="form-group">
+        <label for="annualReturnRate">Annual Return Rate (%)</label>
+        <input type="number" id="annualReturnRate" name="annualReturnRate" step="0.01" required />
+      </div>
+      <div class="form-group">
+        <label for="annualInflationRate">Annual Inflation Rate (%)</label>
+        <input type="number" id="annualInflationRate" name="annualInflationRate" step="0.01" required />
+      </div>
+      <div class="form-group">
+        <label for="totalInstallmentValue">Total Installment Value ($)</label>
+        <input type="number" id="totalInstallmentValue" name="totalInstallmentValue" step="0.01" required />
+      </div>
+      <div class="form-group">
+        <label for="numberOfInstallments">Number of Installments</label>
+        <input type="number" id="numberOfInstallments" name="numberOfInstallments" required />
+      </div>
+      <div class="form-group">
+        <label for="cashValue">Cash Value ($)</label>
+        <input type="number" id="cashValue" name="cashValue" step="0.01" required />
+      </div>
+      <button type="submit">Calculate</button>
+    </form>
+    <div id="result" class="result"></div>
+  </div>
+  <script src="scripts.js"></script>
+</body>
+</html>
