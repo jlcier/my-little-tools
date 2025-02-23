@@ -13,4 +13,9 @@ public class MLTController {
     public ResponseEntity<?> fuelCalculator(@RequestBody @Valid FuelRequest request) {
         return ResponseEntity.ok(MLTService.getHowMuchToPay(request));
     }
+
+    @PostMapping("/installment")
+    public ResponseEntity<?> installmentCalculator(@RequestBody @Valid InstallmentResquest request) {
+        return ResponseEntity.ok(MLTService.compare(request));
+    }
 }
