@@ -18,4 +18,10 @@ public class MLTController {
     public ResponseEntity<?> installmentCalculator(@RequestBody @Valid InstallmentResquest request) {
         return ResponseEntity.ok(MLTService.compare(request));
     }
+
+    @PostMapping("/markdown-to-pdf")
+    public ResponseEntity<?> markdownToPdf(@RequestBody String markdown) {
+        MLTService.markdownToPDF(markdown, "document.pdf");
+        return ResponseEntity.ok().build();
+    }
 }
