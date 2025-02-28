@@ -44,48 +44,88 @@ public class MLTService {
             PdfWriter.getInstance(document, new FileOutputStream(outputPath));
             document.open();
             String[] lines = markdown.split("\n");
+            int fontSize = 12;
+            boolean lineCode = false;
 
-            for (String line : lines) {
-                line = line.trim();
+            for (String rawLine : lines) {
+                if (rawLine.trim().isEmpty()) {
+                    document.add(new Paragraph(" "));
+                    continue;
+                }
 
-                if (line.matches("^#{1,3} .*")) {
+                int indentLevel = 0;
+                while (rawLine.startsWith("\t")) {
+                    indentLevel++;
+                    rawLine = rawLine.substring(1);
+                }
+                while (rawLine.startsWith("    ")) {
+                    indentLevel++;
+                    rawLine = rawLine.substring(4);
+                }
+
+                String line = rawLine.trim();
+
+                if (line.matches("^```.*")) {
+                    lineCode = !lineCode;
+                    Paragraph p = new Paragraph(line.replaceAll("```", ""), new Font(Font.FontFamily.COURIER, fontSize));
+                    document.add(p);
+
+                } else if (lineCode) {
+                    Paragraph p = new Paragraph(line, new Font(Font.FontFamily.COURIER, fontSize));
+                    document.add(p);
+
+                } else if (line.matches("^#{1,5} .*")) {
                     int level = line.lastIndexOf("#") + 1;
-                    Font font = new Font(Font.FontFamily.HELVETICA, 16 - (level * 2), Font.BOLD);
-                    document.add(new Paragraph(line.replaceAll("^#{1,3} ", ""), font));
+                    if (level > 5) {
+                        level = 5;
+                    }
+                    Font font = new Font(Font.FontFamily.HELVETICA, (fontSize * 2) - (level * 2), Font.BOLD);
+                    Paragraph p = new Paragraph(line.replaceAll("^#{1,5} ", ""), font);
+                    document.add(p);
 
                 } else if (line.matches("^\\*\\*.*\\*\\*$")) {
-                    document.add(new Paragraph(line.replaceAll("\\*\\*(.*?)\\*\\*", "$1"), new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+                    Paragraph p = new Paragraph(line.replaceAll("\\*\\*(.*?)\\*\\*", "$1"), new Font(Font.FontFamily.HELVETICA, fontSize, Font.BOLD));
+                    document.add(p);
 
                 } else if (line.matches("^\\*.*\\*$")) {
-                    document.add(new Paragraph(line.replaceAll("\\*(.*?)\\*", "$1"), new Font(Font.FontFamily.HELVETICA, 12, Font.ITALIC)));
+                    Paragraph p = new Paragraph(line.replaceAll("\\*(.*?)\\*", "$1"), new Font(Font.FontFamily.HELVETICA, fontSize, Font.ITALIC));
+                    document.add(p);
 
                 } else if (line.matches("^(-|\\*) .*")) {
-                    document.add(new Paragraph("• " + line.substring(2), new Font(Font.FontFamily.HELVETICA, 12)));
+                    Paragraph p = new Paragraph("• " + line.substring(2), new Font(Font.FontFamily.HELVETICA, fontSize));
+                    p.setIndentationLeft(indentLevel * 20f);
+                    document.add(p);
 
                 } else if (line.matches("^\\d+\\. .*")) {
-                    document.add(new Paragraph(line, new Font(Font.FontFamily.HELVETICA, 12)));
-
-                } else if (line.matches("^```.*")) {
-                    document.add(new Paragraph(line.replaceAll("```", ""), new Font(Font.FontFamily.COURIER, 12)));
+                    Paragraph p = new Paragraph(line, new Font(Font.FontFamily.HELVETICA, fontSize));
+                    p.setIndentationLeft(indentLevel * 20f);
+                    document.add(p);
 
                 } else if (line.matches("\\[.*?\\]\\(.*?\\)")) {
                     Matcher matcher = Pattern.compile("\\[(.*?)\\]\\((.*?)\\)").matcher(line);
                     if (matcher.find()) {
-                        Anchor anchor = new Anchor(matcher.group(1), new Font(Font.FontFamily.HELVETICA, 12, Font.UNDERLINE, BaseColor.BLUE));
+                        Anchor anchor = new Anchor(matcher.group(1), new Font(Font.FontFamily.HELVETICA, fontSize, Font.UNDERLINE, BaseColor.BLUE));
                         anchor.setReference(matcher.group(2));
-                        document.add(anchor);
+                        Paragraph p = new Paragraph();
+                        p.add(anchor);
+                        p.setIndentationLeft(indentLevel * 20f);
+                        document.add(p);
                     }
 
                 } else if (line.startsWith("|")) {
-                    String[] columns = line.split("\\|");
-                    PdfPTable table = new PdfPTable(columns.length - 2);
-                    for (int i = 1; i < columns.length - 1; i++) {
-                        table.addCell(columns[i].trim());
+                    if (!line.contains("| :-") && !line.contains("-: |")) {
+                        String[] columns = line.split("\\|");
+                        PdfPTable table = new PdfPTable(columns.length - 1);
+                        for (int i = 1; i < columns.length; i++) {
+                            table.addCell(columns[i].trim());
+                        }
+                        document.add(table);
                     }
-                    document.add(table);
 
                 } else {
-                    document.add(new Paragraph(line, new Font(Font.FontFamily.HELVETICA, 12)));
+                    Paragraph p = new Paragraph(line, new Font(Font.FontFamily.HELVETICA, fontSize));
+                    p.setIndentationLeft(indentLevel * 20f);
+                    document.add(p);
                 }
             }
 
