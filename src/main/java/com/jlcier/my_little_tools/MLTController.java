@@ -24,4 +24,9 @@ public class MLTController {
         MLTService.markdownToPDF(markdown, "document.pdf");
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/in-full")
+    public ResponseEntity<?> inFull(@RequestBody String value) {
+        return ResponseEntity.ok(MLTService.numbersInFull(value));
+    }
 }
