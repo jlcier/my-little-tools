@@ -137,6 +137,6 @@ public class MLTService {
     }
 
     public static String numbersInFull(String value) {
-        return NumeroPorExtensoUtil.converterValorPorExtenso(value);
+        return NumeroPorExtenso.converterValorPorExtenso(value);
     }
 }
