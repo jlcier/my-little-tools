@@ -7,6 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -138,5 +142,16 @@ public class MLTService {
 
     public static String numbersInFull(String value) {
         return NumeroPorExtenso.converterValorPorExtenso(value);
+    }
+
+    public static String howOld(String birthDate) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            LocalDate birth = LocalDate.parse(birthDate, formatter);
+            int age = Period.between(birth, LocalDate.now()).getYears();
+            return age + " years old";
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid birth date. Please use MM/dd/yyyy format.", e);
+        }
     }
 }

@@ -29,4 +29,9 @@ public class MLTController {
     public ResponseEntity<?> inFull(@RequestBody String value) {
         return ResponseEntity.ok(MLTService.numbersInFull(value));
     }
+
+    @PostMapping("/how-old")
+    public ResponseEntity<?> getAge(@RequestBody String birthDate) {
+        return ResponseEntity.ok(MLTService.howOld(birthDate));
+    }
 }
